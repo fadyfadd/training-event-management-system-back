@@ -1,10 +1,8 @@
 package com.training.training_event_management_system_back.mappers;
 
-import com.training.training_event_management_system_back.dto.EventDTO;
+import com.training.training_event_management_system_back.dto.EventDto;
 import com.training.training_event_management_system_back.entities.Event;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 import java.util.Set;
@@ -14,11 +12,11 @@ public interface EventMapper {
 
 //    EventMapper INSTANCE = Mappers.getMapper(EventMapper.class);
 
-    EventDTO toDTO(Event event);
+    EventDto toDTO(Event event);
 
 
-    Event toEntity(EventDTO dto);
+    Event toEntity(EventDto dto);
 
-    List<EventDTO> toDTOList(List<Event> eventList);
-    Set<Event> toEntitySet(Set<EventDTO> dtoSet);
+    List<EventDto> toDTOList(List<Event> eventList);
+    Set<Event> toEntitySet(Set<EventDto> dtoSet);
 }

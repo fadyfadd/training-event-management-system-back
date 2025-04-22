@@ -1,7 +1,7 @@
 package com.training.training_event_management_system_back.services;
 
-import com.training.training_event_management_system_back.dto.CourseDTO;
-import com.training.training_event_management_system_back.dto.EventDTO;
+import com.training.training_event_management_system_back.dto.CourseDto;
+import com.training.training_event_management_system_back.dto.EventDto;
 import com.training.training_event_management_system_back.entities.Course;
 import com.training.training_event_management_system_back.entities.Event;
 import com.training.training_event_management_system_back.entities.Teacher;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class EventService {
@@ -35,16 +34,16 @@ public class EventService {
     @Autowired
     private TeacherRepository teacherRepository;
 
-    public Optional<EventDTO> getEventById(Long id){
+    public Optional<EventDto> getEventById(Long id){
         return eventRepository.findById(id).map(eventMapper::toDTO);
     }
 
-    public List<EventDTO> getAllEvents(){
+    public List<EventDto> getAllEvents(){
         List<Event> events = eventRepository.findAll();
         return eventMapper.toDTOList(events);
     }
 
-    public EventDTO createEvent(EventDTO eventDTO){
+    public EventDto createEvent(EventDto eventDTO){
         Event event = eventMapper.toEntity(eventDTO);
 
         if (eventDTO.getCourse().getId() != null){
@@ -63,9 +62,16 @@ public class EventService {
         return eventMapper.toDTO(saveEvent);
     }
 
-    public Optional<CourseDTO> getCourseByEventId(Long eventId) {
+    public Optional<CourseDto> getCourseByEventId(Long eventId) {
         return eventRepository.findById(eventId)
                 .map(Event::getCourse)
                 .map(courseMapper::toDTO);
+    }
+
+    public void deleteEventById(Long id){
+        if(!eventRepository.existsById(id)){
+            throw new RuntimeException("Event not found" + id);
+        }
+        eventRepository.deleteById(id);
     }
 }

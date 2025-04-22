@@ -1,15 +1,13 @@
 package com.training.training_event_management_system_back.controllers;
 
-import com.training.training_event_management_system_back.dto.StudentDTO;
-import com.training.training_event_management_system_back.dto.TeacherDTO;
-import com.training.training_event_management_system_back.entities.Teacher;
+import com.training.training_event_management_system_back.dto.teacherDto;
 import com.training.training_event_management_system_back.services.TeacherService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/teachers")
@@ -20,20 +18,32 @@ public class TeacherController {
 
     @Transactional
     @GetMapping("/all")
-    public List<TeacherDTO>getAllTeachers(){
-        return teacherService.getAllTeachers();
+    public ResponseEntity<List<teacherDto>>getAllTeachers(){
+        List<teacherDto> teachers = teacherService.getAllTeachers();
+        return ResponseEntity.ok(teachers);
     }
 
     @GetMapping("/{id}")
-    public TeacherDTO getTeacherById(@PathVariable long id){
-       return teacherService.getTeacherById(id).orElse(null);
+    public ResponseEntity<teacherDto> getTeacherById(@PathVariable long id){
+        return teacherService.getTeacherById(id).map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @Transactional
     @PostMapping("/save")
-    public TeacherDTO createTeacher(@RequestBody TeacherDTO teacher) {
-        return teacherService.createTeacher(teacher);
+    public ResponseEntity<teacherDto> createTeacher(@RequestBody teacherDto teacher) {
+        teacherDto createdTeacher = teacherService.createTeacher(teacher);
+        return ResponseEntity.status(201).body(createdTeacher);
     }
 
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteTeacher(@PathVariable Long id){
+        try {
+            teacherService.deleteTeacherById(id);
+            return ResponseEntity.ok("deleted teacher " + id);
+        }catch (RuntimeException e){
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 }

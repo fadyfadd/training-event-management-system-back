@@ -1,6 +1,6 @@
 package com.training.training_event_management_system_back.controllers;
 
-import com.training.training_event_management_system_back.dto.StudentDTO;
+import com.training.training_event_management_system_back.dto.StudentDto;
 import com.training.training_event_management_system_back.services.StudentService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +20,13 @@ public class StudentController {
 
     @Transactional
     @GetMapping("/all")
-    public ResponseEntity<List<StudentDTO>> getAllStudents() {
-        List<StudentDTO> students = studentService.getAllStudents();
+    public ResponseEntity<List<StudentDto>> getAllStudents() {
+        List<StudentDto> students = studentService.getAllStudents();
         return ResponseEntity.ok(students);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<StudentDTO> getStudentById(@PathVariable Long id) {
+    public ResponseEntity<StudentDto> getStudentById(@PathVariable Long id) {
         return studentService.getStudentById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -34,8 +34,18 @@ public class StudentController {
 
     @Transactional
     @PostMapping("/save")
-    public ResponseEntity<StudentDTO> createStudent(@RequestBody StudentDTO student) {
-        StudentDTO savedStudent = studentService.createStudent(student);
+    public ResponseEntity<StudentDto> createStudent(@RequestBody StudentDto student) {
+        StudentDto savedStudent = studentService.createStudent(student);
         return ResponseEntity.ok(savedStudent);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteStudent(@PathVariable Long id){
+        try {
+            studentService.deleteStudentById(id);
+            return ResponseEntity.ok("deleted student " + id);
+        }catch (RuntimeException e){
+            return ResponseEntity.notFound().build();
+        }
     }
 }
