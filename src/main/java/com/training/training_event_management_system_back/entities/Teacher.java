@@ -1,28 +1,33 @@
 package com.training.training_event_management_system_back.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity(name = "teachers")
 public class Teacher extends Person{
 
 
     private LocalDate startDate;
 
-    protected Teacher() {}
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
+    private List<Event> events;
 
-//    public Teacher(Person person, LocalDate startDate) {
-//        this.person = person;
-//        this.startDate = startDate;
-//    }
-
-    @ManyToOne
-    @JoinColumn(name = "event_id")
-    private Event event;
+    @ManyToMany
+    @JoinTable(
+            name = "course_teacher",
+            joinColumns = @JoinColumn(name = "teacher_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    private Set<Course> courses;
 }

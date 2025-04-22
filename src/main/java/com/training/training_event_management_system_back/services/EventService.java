@@ -1,9 +1,13 @@
 package com.training.training_event_management_system_back.services;
 
+import com.training.training_event_management_system_back.dto.CourseDTO;
 import com.training.training_event_management_system_back.dto.EventDTO;
+import com.training.training_event_management_system_back.entities.Course;
 import com.training.training_event_management_system_back.entities.Event;
+import com.training.training_event_management_system_back.mappers.CourseMapper;
+import com.training.training_event_management_system_back.mappers.EventMapper;
+import com.training.training_event_management_system_back.repositories.CourseRepository;
 import com.training.training_event_management_system_back.repositories.EventRepository;
-import com.training.training_event_management_system_back.repositories.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,14 +22,47 @@ public class EventService {
     private EventRepository eventRepository;
 
     @Autowired
-    private TeacherRepository teacherRepository;
+    private EventMapper eventMapper;
 
-    public Optional<Event> getEventById(Long id){
-        return eventRepository.findById(id);
+    @Autowired
+    private CourseMapper courseMapper;
+
+    @Autowired
+    private CourseRepository courseRepository;
+
+//    @Autowired
+//    private TeacherRepository teacherRepository;
+
+    public Optional<EventDTO> getEventById(Long id){
+        return eventRepository.findById(id).map(eventMapper::toDTO);
     }
 
-//    public Event createEvent(EventDTO eventDTO){
-//        EventDTO event = new EventDTO();
-//        event.setTitle().;
-//    }
+    public List<EventDTO> getAllEvents(){
+        List<Event> events = eventRepository.findAll();
+        return eventMapper.toDTOList(events);
+    }
+
+    public EventDTO createEvent(EventDTO eventDTO){
+        Event event = eventMapper.toEntity(eventDTO);
+
+        if (eventDTO.getCourse().getId() != null){
+            Course course = courseRepository.findById(eventDTO.getCourse().getId())
+                    .orElseThrow(() -> new RuntimeException("Course not found: " + eventDTO.getCourse().getId()));
+            event.setCourse(course);
+        }
+
+       /* if (eventDTO.getCourseID() != null) {
+            courseRepository.findById(eventDTO.getCourseID()).ifPresent(event::setCourse);
+        }*/
+
+
+        Event saveEvent = eventRepository.save(event);
+        return eventMapper.toDTO(saveEvent);
+    }
+
+    public Optional<CourseDTO> getCourseByEventId(Long eventId) {
+        return eventRepository.findById(eventId)
+                .map(Event::getCourse)
+                .map(courseMapper::toDTO);
+    }
 }
