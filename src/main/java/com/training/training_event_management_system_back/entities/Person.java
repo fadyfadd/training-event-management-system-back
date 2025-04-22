@@ -1,5 +1,6 @@
 package com.training.training_event_management_system_back.entities;
 
+import com.training.training_event_management_system_back.enums.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,10 @@ public class Person {
 
     @Column(nullable = false, unique = true)
     private String username;
+
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    Role role;
 
     @Column(nullable = false, unique = true)
     private String email;
