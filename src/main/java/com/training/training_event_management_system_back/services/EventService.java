@@ -4,10 +4,12 @@ import com.training.training_event_management_system_back.dto.CourseDTO;
 import com.training.training_event_management_system_back.dto.EventDTO;
 import com.training.training_event_management_system_back.entities.Course;
 import com.training.training_event_management_system_back.entities.Event;
+import com.training.training_event_management_system_back.entities.Teacher;
 import com.training.training_event_management_system_back.mappers.CourseMapper;
 import com.training.training_event_management_system_back.mappers.EventMapper;
 import com.training.training_event_management_system_back.repositories.CourseRepository;
 import com.training.training_event_management_system_back.repositories.EventRepository;
+import com.training.training_event_management_system_back.repositories.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +32,8 @@ public class EventService {
     @Autowired
     private CourseRepository courseRepository;
 
-//    @Autowired
-//    private TeacherRepository teacherRepository;
+    @Autowired
+    private TeacherRepository teacherRepository;
 
     public Optional<EventDTO> getEventById(Long id){
         return eventRepository.findById(id).map(eventMapper::toDTO);
@@ -51,10 +53,11 @@ public class EventService {
             event.setCourse(course);
         }
 
-       /* if (eventDTO.getCourseID() != null) {
-            courseRepository.findById(eventDTO.getCourseID()).ifPresent(event::setCourse);
-        }*/
-
+        if ( eventDTO.getTeacher().getId() != null){
+            Teacher teacher = teacherRepository.findById(eventDTO.getTeacher().getId())
+                    .orElseThrow(() -> new RuntimeException("Teacher not found: " + eventDTO.getTeacher().getId()));
+            event.setTeacher(teacher);
+        }
 
         Event saveEvent = eventRepository.save(event);
         return eventMapper.toDTO(saveEvent);

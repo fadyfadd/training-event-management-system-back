@@ -15,7 +15,6 @@ public class EventDTO {
     private int maxStudents;
 
     private CourseDTO course;
-
-//    public EventDTO() { }
+    private TeacherDTO teacher;
 
 }
