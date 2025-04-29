@@ -30,7 +30,7 @@ public class TeacherController {
     }
 
     @Transactional
-    @PostMapping("/save")
+    @PostMapping("/register")
     public ResponseEntity<teacherDto> createTeacher(@RequestBody teacherDto teacher) {
         teacherDto createdTeacher = teacherService.createTeacher(teacher);
         return ResponseEntity.status(201).body(createdTeacher);
@@ -45,5 +45,7 @@ public class TeacherController {
             return ResponseEntity.notFound().build();
         }
     }
+
+
 
 }

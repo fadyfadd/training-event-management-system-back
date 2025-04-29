@@ -2,14 +2,16 @@ package com.training.training_event_management_system_back.dto;
 
 import com.training.training_event_management_system_back.enums.Role;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-public class StudentDto {
-    private Long id;
-    private String username;
-    private String email;
+
+@Setter
+@Getter
+public class LoginRequest {
+
+    private String userName;
     private String password;
-    private String firstName;
-    private String lastName;
     private Role role;
+
 }

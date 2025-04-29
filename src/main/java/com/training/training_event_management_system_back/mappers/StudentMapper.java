@@ -3,6 +3,7 @@ package com.training.training_event_management_system_back.mappers;
 import com.training.training_event_management_system_back.dto.StudentDto;
 import com.training.training_event_management_system_back.entities.Student;
 import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 

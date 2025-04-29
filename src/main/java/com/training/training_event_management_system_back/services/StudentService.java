@@ -2,10 +2,12 @@ package com.training.training_event_management_system_back.services;
 
 import com.training.training_event_management_system_back.dto.StudentDto;
 import com.training.training_event_management_system_back.entities.Student;
+import com.training.training_event_management_system_back.enums.Role;
 import com.training.training_event_management_system_back.mappers.StudentMapper;
 import com.training.training_event_management_system_back.repositories.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +23,9 @@ public class StudentService {
     @Autowired
     private StudentMapper studentMapper;
 
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+
+
     public List<StudentDto> getAllStudents(){
         List<Student> students = studentRepository.findAll();
         return studentMapper.toDTOList(students);
@@ -30,9 +35,14 @@ public class StudentService {
         return studentRepository.findById(id).map(studentMapper::toDTO);
     }
 
+    public Student saveStudent(Student student){
+        student.setPassword(encoder.encode(student.getPassword()));
+        return studentRepository.save(student);
+    }
+
     public StudentDto createStudent(StudentDto dto){
         Student student = studentMapper.toEntity(dto);
-        Student savedStudent = studentRepository.save(student);
+        Student savedStudent = saveStudent(student);
         return studentMapper.toDTO(savedStudent);
     }
 
