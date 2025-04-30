@@ -10,7 +10,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface StudentMapper {
 
-//    StudentMapper INSTANCE = Mappers.getMapper(StudentMapper.class);
+    StudentMapper INSTANCE = Mappers.getMapper(StudentMapper.class);
 
     StudentDto toDTO(Student student);
     Student toEntity(StudentDto dto);

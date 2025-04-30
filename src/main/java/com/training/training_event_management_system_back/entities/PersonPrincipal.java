@@ -15,16 +15,21 @@ public class PersonPrincipal implements UserDetails {
 
     private final Person person;
 
+    public Person getPerson() {
+        return this.person;
+    }
+
     public PersonPrincipal(Person person) {
         this.person = person;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> list = new ArrayList<>();
-        list.add(new SimpleGrantedAuthority(person.role.getCurrentRole()));
-
-        return Collections.emptyList();
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        if (person.getRole() != null) {
+            authorities.add(new SimpleGrantedAuthority(person.getRole().getCurrentRole()));
+        }
+        return authorities;
     }
 
     @Override

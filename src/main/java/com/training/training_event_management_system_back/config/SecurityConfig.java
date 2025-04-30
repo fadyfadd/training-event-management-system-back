@@ -42,9 +42,10 @@ public class SecurityConfig {
 
         http.csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers( "/students/login", "/students/register",
-                                                    "/teachers/login", "/teachers/register",
-                                                    "/admins/login", "/admins/register")
+                        .requestMatchers( "/persons/login",
+                                "/students/register",
+                                "/teachers/register",
+                                "/admins/register")
                         .permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
