@@ -1,11 +1,13 @@
 package com.training.training_event_management_system_back.dto;
 
 import com.training.training_event_management_system_back.enums.Role;
+import com.training.training_event_management_system_back.validations.WhiteSpaceConstraint;
 import lombok.Data;
 
 @Data
 public class StudentDto {
     private Long id;
+    @WhiteSpaceConstraint
     private String username;
     private String email;
     private String password;

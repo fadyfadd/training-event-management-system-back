@@ -4,6 +4,7 @@ import com.training.training_event_management_system_back.dto.TeacherDto;
 import com.training.training_event_management_system_back.services.JwtService;
 import com.training.training_event_management_system_back.services.TeacherService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,6 +34,7 @@ public class TeacherController {
         return ResponseEntity.ok(teachers);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<TeacherDto> getTeacherById(@PathVariable long id){
         return teacherService.getTeacherById(id).map(ResponseEntity::ok)
@@ -41,7 +43,7 @@ public class TeacherController {
 
     @Transactional
     @PostMapping("/register")
-    public ResponseEntity<TeacherDto> createTeacher(@RequestBody TeacherDto teacher) {
+    public ResponseEntity<TeacherDto> createTeacher(@RequestBody @Valid TeacherDto teacher) {
         TeacherDto createdTeacher = teacherService.createTeacher(teacher);
         return ResponseEntity.ok().body(createdTeacher);
     }

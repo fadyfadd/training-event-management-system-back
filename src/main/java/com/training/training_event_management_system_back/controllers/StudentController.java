@@ -9,6 +9,7 @@ import com.training.training_event_management_system_back.exception.BusinessExce
 import com.training.training_event_management_system_back.services.JwtService;
 import com.training.training_event_management_system_back.services.StudentService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -52,7 +53,7 @@ public class StudentController {
 
     @Transactional
     @PostMapping("/register")
-    public ResponseEntity<StudentDto> createStudent(@RequestBody StudentDto student) {
+    public ResponseEntity<StudentDto> createStudent(@RequestBody @Valid StudentDto student) {
         StudentDto savedStudent = studentService.createStudent(student);
         return ResponseEntity.ok(savedStudent);
     }
