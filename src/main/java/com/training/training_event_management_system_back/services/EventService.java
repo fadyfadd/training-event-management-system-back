@@ -4,17 +4,26 @@ import com.training.training_event_management_system_back.dto.CourseDto;
 import com.training.training_event_management_system_back.dto.EventDto;
 import com.training.training_event_management_system_back.entities.Course;
 import com.training.training_event_management_system_back.entities.Event;
+import com.training.training_event_management_system_back.entities.Student;
 import com.training.training_event_management_system_back.entities.Teacher;
 import com.training.training_event_management_system_back.mappers.CourseMapper;
 import com.training.training_event_management_system_back.mappers.EventMapper;
+import com.training.training_event_management_system_back.mappers.StudentMapper;
 import com.training.training_event_management_system_back.repositories.CourseRepository;
 import com.training.training_event_management_system_back.repositories.EventRepository;
 import com.training.training_event_management_system_back.repositories.TeacherRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import com.training.training_event_management_system_back.dto.StudentDto;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class EventService {
@@ -33,6 +42,9 @@ public class EventService {
 
     @Autowired
     private TeacherRepository teacherRepository;
+
+    @Autowired
+    private StudentMapper studentMapper;
 
     public Optional<EventDto> getEventById(Long id){
         return eventRepository.findById(id).map(eventMapper::toDTO);
@@ -73,5 +85,24 @@ public class EventService {
             throw new RuntimeException("Event not found" + id);
         }
         eventRepository.deleteById(id);
+    }
+
+    public List<EventDto> getEventByTeacherUsername(String username){
+        List<Event> events = eventRepository.findEventByTeacherUsername(username);
+        return eventMapper.toDTOList(events);
+    }
+
+    @Transactional
+    public List<StudentDto> getStudentsByEvent(Long eventId){
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+        Set<Student> students = event.getStudents();
+        return students.stream().map(studentMapper::toDTO).collect(Collectors.toList());
+    }
+
+    public Page<EventDto> getAllEventsPaginated(int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Event> eventPage = eventRepository.findAll(pageable);
+        return eventPage.map(eventMapper::toDTO);
     }
 }

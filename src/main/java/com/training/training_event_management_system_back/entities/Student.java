@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -19,7 +20,8 @@ public class Student extends Person {
                 joinColumns = @JoinColumn(name = "student_id"),
                 inverseJoinColumns = @JoinColumn(name = "event_id")
                 )
-    private Set<Event> events;
+//    private Set<Event> events;
+    private Set<Event> events = new HashSet<>();
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<Attendance> attendances;

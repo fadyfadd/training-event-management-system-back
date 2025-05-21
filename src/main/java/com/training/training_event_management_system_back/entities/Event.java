@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -37,7 +38,8 @@ public class Event {
     private Teacher teacher;
 
     @ManyToMany(mappedBy = "events")
-    private Set<Student> students;
+    private Set<Student> students = new HashSet<>();
+//    private Set<Student> students;
 
     //One to many with attendance
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)

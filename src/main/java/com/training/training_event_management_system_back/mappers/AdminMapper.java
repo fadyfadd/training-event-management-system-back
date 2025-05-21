@@ -10,7 +10,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface AdminMapper {
-    AdminMapper INSTANCE = Mappers.getMapper(AdminMapper.class);
+//    AdminMapper INSTANCE = Mappers.getMapper(AdminMapper.class);
 
     AdminDto toDTO(Admin admin);
     Admin toEntity(AdminDto adminDto);

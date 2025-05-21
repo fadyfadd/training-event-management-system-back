@@ -1,5 +1,6 @@
 package com.training.training_event_management_system_back.controllers;
 
+import com.training.training_event_management_system_back.dto.EventDto;
 import com.training.training_event_management_system_back.dto.LoginRequest;
 import com.training.training_event_management_system_back.dto.StudentDto;
 import com.training.training_event_management_system_back.entities.Person;
@@ -12,6 +13,8 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,6 +27,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/students")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class StudentController {
 
     @Autowired
@@ -38,6 +42,7 @@ public class StudentController {
     @Transactional
     @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
     @GetMapping("/all")
+    @CrossOrigin
     public ResponseEntity<List<StudentDto>> getAllStudents() {
         List<StudentDto> students = studentService.getAllStudents();
         return ResponseEntity.ok(students);
@@ -69,31 +74,38 @@ public class StudentController {
         }
     }
 
-//    @PostMapping("/login")
-//    public String login(@RequestBody LoginRequest loginRequest) {
-//        try {
-//            Authentication authentication = authenticationManager.authenticate(
-//                    new UsernamePasswordAuthenticationToken(
-//                            loginRequest.getUserName(),
-//                            loginRequest.getPassword()
-//                    )
-//            );
-//
-//            if (authentication.isAuthenticated()) {
-//                PersonPrincipal principal = (PersonPrincipal) authentication.getPrincipal();
-//                String actualRole = principal.getPerson().getRole().getCurrentRole();
-//
-//                if (!actualRole.equals("ROLE_" + loginRequest.getRole())) {
-//                    throw new BusinessException("Incorrect role");
-//                }
-//
-//                return jwtService.generateToken(loginRequest.getUserName());
-//            } else {
-//                throw new BusinessException("Login failed");
-//            }
-//        } catch (Exception e) {
-//            throw new BusinessException("Invalid username or password");
-//        }
-//    }
+    @PostMapping("/{studentId}/events/{eventId}/register")
+    public ResponseEntity<String> registerToEvent(
+            @PathVariable Long studentId,
+            @PathVariable Long eventId
+    ) {
+        String result = studentService.registerStudentToEvent(studentId, eventId);
+        return ResponseEntity.ok(result);
+    }
 
+    @DeleteMapping("/{studentId}/events/{eventId}/unregister")
+    public ResponseEntity<String> unregisterFromEvent(@PathVariable Long studentId, @PathVariable Long eventId) {
+        String result = studentService.unregisterStudentFromEvent(studentId, eventId);
+        return ResponseEntity.ok(result);
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+    @GetMapping("/paginated")
+    public ResponseEntity<Page<StudentDto>> getPaginatedStudents(@RequestParam (defaultValue = "0") int page,
+                                                             @RequestParam (defaultValue = "5") int size){
+
+        Page<StudentDto> studentPage = studentService.getAllStudentsPaginated(page, size);
+        return new ResponseEntity<>(studentPage, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+    @GetMapping("/search")
+    public ResponseEntity<Page<StudentDto>> getStudentsByUsername(
+            @RequestParam String username,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        Page<StudentDto> students = studentService.getStudentsByUsername(username, page, size);
+        return ResponseEntity.ok(students);
+    }
 }
