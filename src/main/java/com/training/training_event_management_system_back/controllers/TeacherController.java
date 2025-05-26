@@ -6,6 +6,7 @@ import com.training.training_event_management_system_back.services.TeacherServic
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -59,6 +60,24 @@ public class TeacherController {
         }catch (RuntimeException e){
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/search")
+    public ResponseEntity<Page<TeacherDto>> getTeachersByUsername(
+            @RequestParam(required = false) String username,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        Page<TeacherDto> teachers;
+
+        if (username != null && !username.trim().isEmpty()) {
+            teachers = teacherService.getTeacherByUsername(username, page, size);
+        } else {
+            teachers = teacherService.getAllTeachersPaginated(page, size);
+        }
+
+        return ResponseEntity.ok(teachers);
     }
 
 }

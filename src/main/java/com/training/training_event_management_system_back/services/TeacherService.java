@@ -6,6 +6,9 @@ import com.training.training_event_management_system_back.enums.Role;
 import com.training.training_event_management_system_back.mappers.TeacherMapper;
 import com.training.training_event_management_system_back.repositories.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -51,4 +54,16 @@ public class TeacherService {
         }
         teacherRepository.deleteById(id);
     }
+
+    public Page<TeacherDto> getTeacherByUsername(String username, int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Teacher> teacherPage = teacherRepository.findByUsernameContainingIgnoreCase(username, pageable);
+        return  teacherPage.map(teacherMapper::toDTO);
+    }
+    public Page<TeacherDto> getAllTeachersPaginated(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Teacher> teacherPage = teacherRepository.findAll(pageable);
+        return teacherPage.map(teacherMapper::toDTO);
+    }
+
 }
