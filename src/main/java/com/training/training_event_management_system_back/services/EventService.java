@@ -87,6 +87,12 @@ public class EventService {
         eventRepository.deleteById(id);
     }
 
+    public List<EventDto> getEventByStudentUsername(String username) {
+        List<Event> events = eventRepository.findEventsByStudentUsername(username);
+        return eventMapper.toDTOList(events);
+    }
+
+
     public List<EventDto> getEventByTeacherUsername(String username){
         List<Event> events = eventRepository.findEventByTeacherUsername(username);
         return eventMapper.toDTOList(events);
@@ -105,4 +111,22 @@ public class EventService {
         Page<Event> eventPage = eventRepository.findAll(pageable);
         return eventPage.map(eventMapper::toDTO);
     }
+
+    @Transactional
+    public void unregisterStudentFromEvent(Long eventId, String username) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found with ID: " + eventId));
+
+        Student studentToRemove = event.getStudents().stream()
+                .filter(student -> student.getUsername().equals(username))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Student not registered for this event"));
+
+        event.getStudents().remove(studentToRemove);
+        studentToRemove.getEvents().remove(event);
+
+        eventRepository.save(event); // save event
+    }
+
+
 }

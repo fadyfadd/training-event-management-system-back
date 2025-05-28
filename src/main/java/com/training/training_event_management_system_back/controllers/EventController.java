@@ -20,7 +20,7 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STUDENT')")
     @GetMapping("/all")
     public ResponseEntity<List <EventDto>>getAllEvents(){
         List<EventDto> events = eventService.getAllEvents();
@@ -66,6 +66,14 @@ public class EventController {
         return ResponseEntity.ok(events);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER') or hasRole('STUDENT')")
+    @GetMapping("/student/{username}")
+    public ResponseEntity<List<EventDto>> getEventsByStudentUsername(@PathVariable String username) {
+        List<EventDto> events = eventService.getEventByStudentUsername(username);
+        return ResponseEntity.ok(events);
+    }
+
+
     @GetMapping("/{eventId}/students")
     public ResponseEntity<List<StudentDto>> getStudentsByEvent(@PathVariable Long eventId) {
         List<StudentDto> students = eventService.getStudentsByEvent(eventId);
@@ -79,6 +87,18 @@ public class EventController {
 
         Page<EventDto> eventPage = eventService.getAllEventsPaginated(page, size);
         return new ResponseEntity<>(eventPage, HttpStatus.OK);
+    }
+
+
+    @PreAuthorize("hasRole('STUDENT')")
+    @DeleteMapping("/{eventId}/unregister/{username}")
+    public ResponseEntity<String> unregisterStudentFromEvent(@PathVariable Long eventId, @PathVariable String username) {
+        try {
+            eventService.unregisterStudentFromEvent(eventId, username);
+            return ResponseEntity.ok("Student unregistered successfully from event with ID: " + eventId);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
 

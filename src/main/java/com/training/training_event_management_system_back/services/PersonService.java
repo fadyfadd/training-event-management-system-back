@@ -19,7 +19,7 @@ public class PersonService {
     @Autowired
     private JwtService jwtService;
 
-    public String login(LoginRequest loginRequest){
+    public String login(LoginRequest loginRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -36,7 +36,9 @@ public class PersonService {
                     throw new BusinessException("Incorrect role");
                 }
 
-                return jwtService.generateToken(loginRequest.getUserName());
+                Long id = principal.getPerson().getId();
+
+                return jwtService.generateToken(loginRequest.getUserName(), id);
             } else {
                 throw new BusinessException("Login failed");
             }
@@ -44,5 +46,6 @@ public class PersonService {
             throw new BusinessException("Invalid username or password");
         }
     }
+
 
 }
