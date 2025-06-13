@@ -51,8 +51,8 @@ public class EventService {
     }
 
     public List<EventDto> getAllEvents(){
-        List<Event> events = eventRepository.findAll();
-        return eventMapper.toDTOList(events);
+//        List<Event> events = eventRepository.findAll();
+        return eventRepository.findAll().stream().map((a)->eventMapper.toDTO(a)).collect(Collectors.toList());
     }
 
     public EventDto createEvent(EventDto eventDTO){
@@ -88,14 +88,14 @@ public class EventService {
     }
 
     public List<EventDto> getEventByStudentUsername(String username) {
-        List<Event> events = eventRepository.findEventsByStudentUsername(username);
-        return eventMapper.toDTOList(events);
+//        List<Event> events = eventRepository.findEventsByStudentUsername(username);
+        return eventRepository.findEventsByStudentUsername(username).stream().map(eventMapper::toDTO).collect(Collectors.toList());
     }
 
 
     public List<EventDto> getEventByTeacherUsername(String username){
-        List<Event> events = eventRepository.findEventByTeacherUsername(username);
-        return eventMapper.toDTOList(events);
+//        List<Event> events = eventRepository.findEventByTeacherUsername(username);
+        return eventRepository.findEventByTeacherUsername(username).stream().map(eventMapper::toDTO).collect(Collectors.toList());
     }
 
     @Transactional

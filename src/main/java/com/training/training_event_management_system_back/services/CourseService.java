@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseService {
@@ -20,8 +21,8 @@ public class CourseService {
     private CourseMapper courseMapper;
 
     public List<CourseDto> getAllCourses() {
-        List<Course> courses = courseRepository.findAll();
-        return courseMapper.toDTOList(courses);
+//        List<Course> courses = courseRepository.findAll();
+        return courseRepository.findAll().stream().map(courseMapper::toDTO).collect(Collectors.toList());
     }
 
     public Optional<Course>getCourseById(Long id){

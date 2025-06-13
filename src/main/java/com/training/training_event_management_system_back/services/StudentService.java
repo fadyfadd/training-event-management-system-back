@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,8 +41,8 @@ public class StudentService {
 
 
     public List<StudentDto> getAllStudents(){
-        List<Student> students = studentRepository.findAll();
-        return studentMapper.toDTOList(students);
+//        List<Student> students = studentRepository.findAll();
+        return studentRepository.findAll().stream().map(student -> studentMapper.toDTO(student)).collect(Collectors.toList());
     }
 
     public Optional<StudentDto> getStudentById(Long id){

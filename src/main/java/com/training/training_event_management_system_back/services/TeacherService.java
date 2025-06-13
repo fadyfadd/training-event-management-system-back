@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TeacherService {
@@ -29,8 +30,8 @@ public class TeacherService {
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     public List<TeacherDto>getAllTeachers(){
-        List<Teacher> teachers = teacherRepository.findAll();
-        return teacherMapper.toDTOList(teachers);
+//        List<Teacher> teachers = teacherRepository.findAll();
+        return teacherRepository.findAll().stream().map(teacher -> teacherMapper.toDTO(teacher)).collect(Collectors.toList());
     }
 
     public Optional<TeacherDto>getTeacherById(Long id){
